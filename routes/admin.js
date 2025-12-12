@@ -86,17 +86,13 @@ adminRouter.post("/course",authAdmin,async function(req,res){
 })
 
 adminRouter.put("/course",authAdmin,async function(req,res){
+    const adminId = req.userId;
     const {title , description , imageUrl , price ,courseId} = req.body ;
 
-    const course = await CourseModel.findByIdAndUpdate(
-        courseId ,
-        {
-            title,
-            description,
-            imageUrl,
-            price
-        },
-        {new : true }
+    const course = await CourseModel.findOneAndUpdate(
+        {_id : courseId, creatorId : adminId},
+        {title, description, imageUrl, price},
+        {new : true } //confirming is it a new updated data 
     )
 
     if (!course){
@@ -105,13 +101,14 @@ adminRouter.put("/course",authAdmin,async function(req,res){
         })
     }else{
         res.json({
-            message: "course updated"
+            message: "course updated",
+            course
         })
     }
     
 })
 
-adminRouter.get("/course/bulk",async function(req,res){
+adminRouter.get("/course/bulk",authAdmin,async function(req,res){
     const adminId = req.userId ;
     const admin = await CourseModel.find({
         creatorId : adminId
