@@ -30,7 +30,7 @@ const Course = new Schema({
 
 })
 
-const Purchases = new Schema({
+const Purchase = new Schema({
     courseId : obejectId, //id from course data 
     userId : obejectId //id form user data
     
@@ -39,7 +39,7 @@ const Purchases = new Schema({
 const UserModel = mongoose.model("Users",User);
 const AdminModel = mongoose.model("Admins",Admin);
 const CourseModel = mongoose.model("Courses",Course);
-const PurchaseModel = mongoose.model("Purchases",Purchases);
+const PurchaseModel = mongoose.model("Purchases",Purchase);
 
 module.exports = {
     UserModel: UserModel,

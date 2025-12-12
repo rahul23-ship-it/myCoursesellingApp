@@ -1,7 +1,7 @@
 const express = require("express");
 const Router = express.Router ;
 const userRouter = Router();
-const { UserModel } = require("../db");
+const { UserModel, PurchaseModel, CourseModel } = require("../db");
 const bcrypt = require("bcrypt");
 const JWT_SECRET_USER = process.env.JWT_SECRET_USER ;
 const jwt = require("jsonwebtoken");
@@ -53,13 +53,13 @@ userRouter.post("/signin",async function(req,res){
                 });
             }else{
                 return res.status(403).json({
-                    message: "error in signing in"
+                    message: "Wrong password"
                 });
             }
 
         }else{
             return res.status(403).json({
-                message: "wrong password"
+                message: "emial doesnt exists"
             });
         }
         
@@ -70,12 +70,26 @@ userRouter.post("/signin",async function(req,res){
     }
 })
 
-userRouter.get("/purchases",function(req,res){
-    res.json({
-        message: "You have signed up"
-    })
+userRouter.get("/purchases",authUser,async function(req,res){
+    const userId = req.userId ;
 
-    
+    const purchases = await PurchaseModel.find({
+        userId
+    })
+    if (!purchases){
+        res.status(403).json({
+            message: "No course found"
+        })
+    }else{
+        const courseData = await CourseModel.find({
+            _id :{ $in : purchases.map(x => x.courseId)} // to find multiple ids the user have purchased in an array 
+        })
+
+        res.json({
+            purchases,
+            courseData
+        })
+    }
 })
 
 module.exports = {
