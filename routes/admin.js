@@ -7,10 +7,11 @@ const bcrypt = require("bcrypt");
 const JWT_SECRET_ADMIN = process.env.JWT_SECRET_ADMIN ;
 const jwt = require("jsonwebtoken");
 const { authAdmin } = require("../middleware/adminMid");
+const {zodcheck} =require("../zod");
 
 
 
-adminRouter.post("/signup",async function(req,res){
+adminRouter.post("/signup",zodcheck,async function(req,res){
     const {email, password , firstname , lastname} = req.body ;
        
     
